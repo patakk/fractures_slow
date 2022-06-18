@@ -109,14 +109,14 @@ void main() {
     vec3 color = vec3(0.0);
 
     vec2 q = vec2(0.);
-    q.x = fbm3( st + 0.1, u_time*.08);
-    q.y = fbm3( st + vec2(1.0), u_time*.08);
+    q.x = fbm3( st + 0.1, 0.*u_time*.08);
+    q.y = fbm3( st + vec2(1.0), 0.*u_time*.08);
 
     vec2 r = vec2(0.);
-    r.x = fbm3( st + 1.0*q + vec2(1.7,9.2)+ 0.15*u_time, u_time*.08);
-    r.y = fbm3( st + 1.0*q + vec2(8.3,2.8)+ 0.126*u_time, u_time*.08);
+    r.x = fbm3( st + 1.0*q + vec2(1.7,9.2)+ 0.15*0.*u_time, 0.*u_time*.08);
+    r.y = fbm3( st + 1.0*q + vec2(8.3,2.8)+ 0.126*0.*u_time, u_time*.08);
 
-    float f = fbm3(st+r, u_time*.08);
+    float f = fbm3(st+r, 0.*u_time*.08);
 
     color = mix(vec3(0.101961,0.619608,0.666667),
                 vec3(0.666667,0.666667,0.498039),
@@ -155,13 +155,14 @@ void main() {
     //imgd.gb *= 0.;
     //imgd.r = 1. - imgd.r;
 
-    float salt = .927*smoothstep(.90, .96, randomNoise(uv+seed/100000.+u_time*.001+fbm(uv)));
-    float pepper = 1. - .1*smoothstep(.7, .99, randomNoise(uv+seed/100000.+u_time*.001+fbm(uv)));
+    float salt = .927*smoothstep(.90, .96, randomNoise(uv+seed/100000.+0.*u_time*.001+fbm(uv)));
+    float salt2 = .927*smoothstep(.998, .999, randomNoise(uv+seed/100000.+0.*u_time*.001+fbm(uv)));
+    float pepper = .5 + .5*smoothstep(.99, .4, randomNoise(uv+seed/100000.+0.*u_time*.001+fbm(uv)));
     float p = 0.5;
     //vec4 outc = imgc*p + (1.-p)*imgd;
 
-    vec4 outc = imgd + salt*.2;
-    outc = outc * pepper;
+    vec4 outc = imgd * pepper;
+    outc = outc + .2*salt + .3*salt2;
     outc = 0.1 + .8*outc;
     //outc.b *= 0.995;
     //outc = (.5 + .5*imgg)*imgd*imgd*imgd*imgd + .17*smoothstep(.12, .13, fff(uv*2612., seed+55.631));

@@ -47,36 +47,7 @@ function fxrandom(a, b){
 
 
 var palettes0 = [
-    'f4c7a4-e8e1ef-d9fff8-c7ffda-c4f4c7-9bb291',
-    'f46036-5b85aa-414770-372248',
-    '084c61-db504a-e3b505-4f6d7a-56a3a6',
-    '177e89-084c61-db3a34-ffc857-323031',
-    '32373b-4a5859-f4d6cc-f4b860-c83e4d',
-    'c0caad-9da9a0-654c4f-b26e63-cec075',
-    'ac80a0-89aae6-3685b5-0471a6-061826',
-    'fbf5f3-e28413-de3c4b-c42847',
-    'dceed1-aac0aa-736372-a18276-7a918d',
-    '12355b-420039-d72638-ff570a',
-    '555b6e-89b0ae-bee3db-faf9f9-ffd6ba',
-    'de6b48-e5b181-f4b9b2-daedbd-7dbbc3',
-    'f55d3e-878e88-f7cb15-76bed0',
-    'fe5f55-f0b67f-d6d1b1-c7efcf-eef5db',
-    'bfb48f-564e58-904e55-f2efe9-252627',
-    'ba1200-031927-9dd1f1-508aa8-c8e0f4',
-    'ffbc42-df1129-bf2d16-218380-73d2de',
-    '1f363d-40798c-70a9a1-9ec1a3-cfe0c3',
-    'fa8334-fffd77-ffe882-388697-54405f',
-    'ed6a5a-f4f1bb-9bc1bc-e6ebe0-36c9c6',
-    '3e5641-a24936-d36135-282b28-83bca9',
-    '664c43-873d48-dc758f-e3d3e4-00ffcd',
-    '013a63-01497c-014f86-2a6f97-2c7da0-468faf-61a5c2-fa1603',
-    '304d7d-db995a-bbbbbb-222222-fdc300',
-    '8789c0-45f0df-c2cae8-8380b6-111d4a',
-    '006466-065a60-fb525b-144552-1b3a4b-212f45-272640-fb525b-312244-3e1f47-4d194d',
-    '003844-006c67-f194b4-ffb100-ffebc6',
-    '4d5057-4e6e5d-4da167-3bc14a-cfcfcf',
-    '007f5f-2b9348-55a630-80b918-aacc00-bfd200-d4d700-dddf00-eeef20-cf3311',
-    '5fad56-f2c14e-f78154-4d9078-b4431c',
+    '001d3d-003566-001d3d-003566-ffd60a',
 ]
 function shuffle(array) {
     let currentIndex = array.length
@@ -133,6 +104,7 @@ function setup(){
         let caca = [];
         cols.forEach((e)=>{
             var hhh = hexToRgb(e);
+            console.log(hhh)
             var gg = 0.3*hhh[0] + 0.59*hhh[1] + 0.11*hhh[2];
             if(gg < 127){
                 //hhh[0] *= .5/gg;
@@ -143,7 +115,7 @@ function setup(){
         });
         shuffle(caca)
         var coco = [];
-        caca.forEach((e, i)=>{coco.push([(caca[i][0]+.01*map(fxrand(), 0, 1, -.2, .2)), (caca[i][1]+.01*map(fxrand(), 0, 1, -.2, .2)), (caca[i][2]+.01*map(fxrand(), 0, 1, -.2, .2))])});
+        caca.forEach((e, i)=>{coco.push([(caca[i][0]+0*.01*map(fxrand(), 0, 1, -.2, .2)), (caca[i][1]+0*.01*map(fxrand(), 0, 1, -.2, .2)), (caca[i][2]+0*.01*map(fxrand(), 0, 1, -.2, .2))])});
         palettes[k] = coco;
     }
 
@@ -357,9 +329,14 @@ function showall(){
 
 }
 
-var N = 10;
+var N = 30;
+var all = 0;
 
 function initLines(its){
+    if(its == numits)
+        N = 30;
+    else
+        N = 30;
     for(var k = 0; k < N; k++){
         var x = map(fxrand(), 0, 1, -res/2*sc*.98, res/2*sc*.98);
         var y = map(pow(fxrand(),1), 0, 1, -res/2*sc*.98, res/2*sc*.98);
@@ -372,21 +349,22 @@ function initLines(its){
             //dir.rotate(radians(map(fxrand(), 0, 1, -77, 77)));
         }
         dir.rotate(fxrand()*100);
-        movers.push({'pos': createVector(x, y), 'dir': dir});
-        movers.push({'pos': createVector(x, y), 'dir': p5.Vector.mult(dir, -1)});
+        movers.push({'pos': createVector(x, y), 'dir': dir, 'id': all++});
+        movers.push({'pos': createVector(x, y), 'dir': p5.Vector.mult(dir, -1), 'id': all++});
     }
     return movers;
 }
 
 var sc = .9;
 var step = 0;
-numits = 32;
+numits = 12;
 
 function move(){
     var toremove = [];
     for(var k = 0; k < movers.length; k++){
         var p = movers[k]['pos'];
         var dir = movers[k]['dir'];
+        var id = movers[k]['id'];
 
         var frq = 1.;
         if(its < numits){
@@ -394,14 +372,14 @@ function move(){
         }
         var amp = 1.;
         if(its < numits){
-            amp = 9.;
+            amp = 1 + 5*power(noise(its), 4);
         }
         
         var option = 0;
         if(option == 0){
             var acc = createVector(0, 0);
-            acc.x = (-.5+power(noise(k, step*.01*frq, 8833.3), 2));
-            acc.y = (-.5+power(noise(k, step*.01*frq, 221.21), 2));
+            acc.x = (-.5+power(noise(id, step*.01*frq, 8833.3), 2));
+            acc.y = (-.5+power(noise(id, step*.01*frq, 221.21), 2));
             acc.normalize();
             acc.mult(.0015*amp);
             dir.add(acc);
@@ -409,8 +387,8 @@ function move(){
             dir.normalize();
         }
         else{
-            dir.x += .5*amp*(-.5+power(noise(k, step*.0001*frq, 8833.3), 2));
-            dir.y += .5*amp*(-.5+power(noise(k, step*.0001*frq, 221.21), 2));
+            dir.x += .5*amp*(-.5+power(noise(k, step*.000001*frq, 8833.3), 2));
+            dir.y += .5*amp*(-.5+power(noise(k, step*.000001*frq, 221.21), 2));
             dir.normalize();
         }
 
@@ -421,19 +399,34 @@ function move(){
         pn.add(dir);
 
         var maskvalue = round(mask.get(pn.x+res/2, -pn.y+res/2)[0]/255.);
-        if(maskvalue == 1){
+        
+        /*let d = 1;
+        let off = (round(pn.y+res/2) * mask.width + round(pn.x+res/2)) * d * 4;
+        let components = [
+          mask.pixels[off],
+          mask.pixels[off + 1],
+          mask.pixels[off + 2],
+          mask.pixels[off + 3]
+        ];*/
+        if(maskvalue > 0){
             p.add(dir);
         }
         else{
             toremove.push(k);
         }
         if(p.x > res/2*sc || p.x < -res/2*sc){
-            dir.x *= -1;
-            p.add(dir);
+            //dir.x *= -1;
+            //p.add(dir);
+            //p.add(dir);
+            //p.add(dir);
+            toremove.push(k);
         }
         if(p.y > res/2*sc || p.y < -res/2*sc){
-            dir.y *= -1;
-            p.add(dir);
+            //dir.y *= -1;
+            //p.add(dir);
+            //p.add(dir);
+            //p.add(dir);
+            toremove.push(k);
         }
     }
 
@@ -446,21 +439,37 @@ function move(){
 
 function render(){
     pg.noStroke();
-    pg.fill(130);
     mask.noStroke();
     mask.fill(0);
 
+    //pg.colorMode(HSB, 100);
+    pg.colorMode(RGB, 255);
     for(var k = 0; k < movers.length; k++){
         var p = movers[k]['pos'];
         var pn = p.copy();
         var dir = movers[k]['dir'];
-        var rr = 2 + 2*power(noise(step*0.01, k), 3);
+        var id = movers[k]['id'];
+        var rr = 4*(1+1*power(noise(step*0.01, id), 3));
         pn.add(dir);
-        pg.ellipse(p.x, p.y, rr, rr);
-        pg.ellipse(pn.x, pn.y, rr, rr);
-        
-        mask.fill(0);
+        //pg.fill(k%25*3,40);
+        //pg.rect(p.x+220/2, p.y, 220., rr);
+        //pg.rect(p.x, p.y, rr, rr);
+        var col = palette[its%palette.length];
+        if(its == numits && false){
+            pg.fill(90, 50);
+            pg.rect(pn.x, pn.y, rr, rr);
+        }
+        else{
+            pg.fill(col[0], col[1], col[2]);
+            pg.rect(pn.x, pn.y, rr, rr);
+        }
+
         mask.ellipse(p.x, p.y, 2, 2);
+    }
+    pg.colorMode(RGB, 255);
+
+    if(frameCount%10 == 0){
+        //print(frameRate());
     }
 }
 
